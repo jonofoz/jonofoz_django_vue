@@ -20,11 +20,11 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['email', 'full_name', 'short_name', 'registered_at']
+        fields = ['id', 'email', 'full_name', 'short_name', 'registered_at']
 
 
 class UserWriteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['email', 'password', 'first_name', 'last_name']
+        fields = ['id', 'email', 'password', 'first_name', 'last_name']
