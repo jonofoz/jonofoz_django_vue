@@ -9,7 +9,7 @@
         <hr>
         <br>
         <h3>
-          <router-link :to="{ name: 'read-post', params: { slug: post.slug }}">{{ post.title }}</router-link> |
+          <router-link :to="{ name: 'read-post', params: { slug: post.slug}}">{{ post.title }}</router-link> |
           <router-link :to="{ name: 'edit-post', params: { slug: post.slug }}" action="edit"><font-awesome-icon icon="pen-square" /></router-link>
         </h3>
         <p class="last-updated">Updated {{ post.updated_at }}</p>
@@ -19,6 +19,7 @@
       </li>
       <hr>
     </ul>
+
   </div>
 </template>
 
@@ -34,12 +35,17 @@ export default {
   methods: {
     async getBlogPosts () {
       const userID = this.$store.state.auth.profile.id
+      console.log(userID)
       await fetch(`http://localhost:8000/api/posts?user-id=${userID}`)
         .then(res => res.json())
         .then(posts => { this.posts = posts })
     },
-    shorten(text){
-      return `${text.slice(0, 300)} ...`;
+    shorten (text) {
+      if (text.length > 300) {
+        return `${text.slice(0, 300)} ...`
+      } else {
+        return text
+      }
     }
   },
   created () {

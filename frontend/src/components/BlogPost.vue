@@ -19,8 +19,8 @@ export default {
     return {
       user: this.$store.state.auth.profile,
       post: {
-          title: "..."
-    }
+        title: '...'
+      }
     }
   },
   methods: {

@@ -58,7 +58,7 @@ export default {
   },
   methods: {
     async getBlogPosts () {
-      const userID = this.user.id;
+      const userID = this.user.id
       await fetch(`http://localhost:8000/api/posts?user-id=${userID}`)
         .then(res => res.json())
         .then(posts => { this.posts = posts })
@@ -70,74 +70,74 @@ export default {
         .then(res => res.filter(post => post.slug === this.$route.params.slug)[0])
         .then(post => { this.post = post })
     },
-    submitForm(){
-      if (!this.post.id){
-        this.createPost();
-      }
-      else {
-        this.updatePost();
+    submitForm () {
+      if (!this.post.id) {
+        this.createPost()
+      } else {
+        this.updatePost()
       }
     },
-    async createPost(){
+    async createPost () {
     //  console.log(this.user);
     //  console.log(this.post);
-    const {slug, title, body} = this.post;
-      if (slug.length && title.length && body.length){
+      const { slug, title, body } = this.post
+      if (slug.length && title.length && body.length) {
         this.getBlogPosts()
-          await fetch("http://localhost:8000/api/posts/", {
-          method: "post",
+        await fetch('http://localhost:8000/api/posts/', {
+          method: 'post',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json'
           },
-          body: JSON.stringify(this.post),
-        }).catch(e => console.log(e));
-        this.$router.push('http:/localhost:8080/posts');
+          body: JSON.stringify(this.post)
+        }).then(() => {
+          this.$router.push('http:/localhost:8080/posts')
+        }).catch(e => console.log(e))
       }
     },
-    async updatePost(){
-      this.getBlogPosts()
-        await fetch(`http://localhost:8000/api/posts/${this.post.id}/`, {
-        method: "put",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(this.post),
-      }).catch(e => console.log(e));
-      this.$router.push('http:/localhost:8080/posts');
-    },
-    async deletePost() {
+    async updatePost () {
       this.getBlogPosts()
       await fetch(`http://localhost:8000/api/posts/${this.post.id}/`, {
-        method: "delete",
+        method: 'put',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify(this.post),
-      });
-        this.$router.push('http:/localhost:8080/posts');
+        body: JSON.stringify(this.post)
+      }).then(() => {
+        this.$router.push('http:/localhost:8080/posts')
+      }).catch(e => console.log(e))
+    },
+    async deletePost () {
+      this.getBlogPosts()
+      await fetch(`http://localhost:8000/api/posts/${this.post.id}/`, {
+        method: 'delete',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(this.post)
+      }).then(() => {
+        this.$router.push('http:/localhost:8080/posts')
+      })
     }
   },
 
   created () {
     this.getBlogPosts()
-    if (this.$route.params.slug){
+    if (this.$route.params.slug) {
       this.getBlogPost()
     }
   },
   computed: {
-        actionText: function(){
-          const action = this.$props.action;
-          if (action == "edit"){
-            return "Update";
-          }
-          else if (action == "add"){
-            return "Create"
-          }
-          else {
-            console.log(action);
-          }
-        }
-    },
+    actionText: function () {
+      const action = this.$props.action
+      if (action === 'edit') {
+        return 'Update'
+      } else if (action === 'add') {
+        return 'Create'
+      } else {
+        console.log(action)
+      }
+    }
+  }
 }
 </script>
 
