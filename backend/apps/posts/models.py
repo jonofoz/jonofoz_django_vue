@@ -16,4 +16,4 @@ class Post(models.Model):
     def __str__(self):
         return self.title
     class Meta:
-        ordering = ['created_at', 'updated_at', 'user', 'title', 'body', 'slug']
+        ordering = ['id', 'created_at', 'updated_at', 'user', 'title', 'body', 'slug']
