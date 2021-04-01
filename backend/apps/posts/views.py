@@ -9,9 +9,8 @@ class PostsViewSet(ModelViewSet):
 
     def get_queryset(self):
         # Get all posts if a user's id isn't provided, else return only posts by user id.
-        user = self.request.GET.get('user', '')
-        if user:
-            return Post.objects.filter(user=user)
-            pass
+        user_id = self.request.GET.get('user-id', '')
+        if user_id:
+            return Post.objects.filter(user_id=user_id)
         else:
             return Post.objects.all()
