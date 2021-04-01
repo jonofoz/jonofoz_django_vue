@@ -1,41 +1,38 @@
 <template>
   <div class="container">
-    <h1><span class="green-text">{{ action }} Post</span></h1>
+
+    <router-link to="/posts"><button class="btn btn btn-primary">Back to Posts</button></router-link>
+    <hr>
+    <h1><span class="green-text">{{ actionText }} Post</span></h1>
     <p align="center">
       <!-- <img src="https://i.imgur.com/SA8cjs8.png" @click="getBlogPosts"> -->
     </p>
     <div class="row">
-
         <div class="col-md-8 col-md-offset-2">
-
-            <form action="" method="POST">
-
+            <form @submit.prevent="submitForm">
                 <div class="form-group has-error">
-                    <label for="slug">Slug <span class="require">*</span> <small>(This field use in url path.)</small></label>
-                    <input type="text" class="form-control" name="slug" />
-                    <span class="help-block">Field not entered!</span>
+                    <label for="slug">Slug</label>
+                    <input type="text" class="form-control" name="slug" v-model="post.slug" />
+                </div>
+                <div class="form-group">
+                    <label for="title">Title</label>
+                    <input type="text" class="form-control" name="title" v-model="post.title" />
                 </div>
 
                 <div class="form-group">
-                    <label for="title">Title <span class="require">*</span></label>
-                    <input type="text" class="form-control" name="title" />
-                </div>
-
-                <div class="form-group">
-                    <label for="description">Description</label>
-                    <textarea rows="5" class="form-control" name="description" ></textarea>
-                </div>
-
-                <div class="form-group">
-                    <p><span class="require">*</span> - required fields</p>
+                    <label for="description">What's up, {{ user.full_name }}?</label>
+                    <textarea rows="5" class="form-control" name="body" v-model="post.body"></textarea>
                 </div>
 
                 <div class="form-group">
                     <button type="submit" class="btn btn-primary">
-                        {{ action }}
+                        {{ actionText }}
                     </button>
                     <button class="btn btn-default">
                         Cancel
+                    </button>
+                    <button class="btn btn-danger" @click="deletePost">
+                        Delete
                     </button>
                 </div>
 
@@ -53,22 +50,82 @@ export default {
   data () {
     return {
       user: this.$store.state.auth.profile,
-      post: {},
+      post: {
+        user_id: this.$store.state.auth.profile.id
+      },
+      posts: {}
     }
   },
   methods: {
     async getBlogPosts () {
-      const userID = this.$store.state.auth.profile.id
-      await fetch(`http://localhost:8000/api/posts?user=${userID}`)
+      const userID = this.user.id;
+      await fetch(`http://localhost:8000/api/posts?user-id=${userID}`)
         .then(res => res.json())
         .then(posts => { this.posts = posts })
+    },
+    async getBlogPost () {
+      const userID = this.user.id
+      await fetch(`http://localhost:8000/api/posts?user-id=${userID}`)
+        .then(res => res.json())
+        .then(res => res.filter(post => post.slug === this.$route.params.slug)[0])
+        .then(post => { this.post = post })
+    },
+    submitForm(){
+      if (!this.post.id){
+        this.createPost();
+      }
+      else {
+        this.updatePost();
+      }
+    },
+    async createPost(){
+    //  console.log(this.user);
+    //  console.log(this.post);
+    const {slug, title, body} = this.post;
+      if (slug.length && title.length && body.length){
+        this.getBlogPosts()
+          await fetch("http://localhost:8000/api/posts/", {
+          method: "post",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(this.post),
+        }).catch(e => console.log(e));
+        this.$router.push('http:/localhost:8080/posts');
+      }
+    },
+    async updatePost(){
+      this.getBlogPosts()
+        await fetch(`http://localhost:8000/api/posts/${this.post.id}/`, {
+        method: "put",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(this.post),
+      }).catch(e => console.log(e));
+      this.$router.push('http:/localhost:8080/posts');
+    },
+    async deletePost() {
+      this.getBlogPosts()
+      await fetch(`http://localhost:8000/api/posts/${this.post.id}/`, {
+        method: "delete",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(this.post),
+      });
+        this.$router.push('http:/localhost:8080/posts');
     }
   },
+
   created () {
     this.getBlogPosts()
+    if (this.$route.params.slug){
+      this.getBlogPost()
+    }
   },
   computed: {
-        action: function(){
+        actionText: function(){
           const action = this.$props.action;
           if (action == "edit"){
             return "Update";
