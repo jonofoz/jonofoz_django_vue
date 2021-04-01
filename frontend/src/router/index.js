@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
+import AddBlogPost from '@/components/AddBlogPost.vue'
 import BlogPosts from '@/components/BlogPosts.vue'
 import Login from '@/views/Login.vue'
 import Register from '@/views/Register.vue'
@@ -10,6 +11,8 @@ import store from '@/store/index.js'
 const routes = [
   { path: '*', component: BlogPosts },
   { path: '/posts', component: BlogPosts },
+  { path: '/posts/add', component: AddBlogPost, props: { action: "add" } },
+  { path: '/posts/edit/:slug', component: AddBlogPost, name: 'edit-post', props: { action: "edit" } },
   { path: '/login', name: 'login', component: Login },
   { path: '/register', name: 'register', component: Register },
   { path: '/password-reset', name: 'password-reset', component: PasswordReset }

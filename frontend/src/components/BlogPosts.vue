@@ -4,13 +4,16 @@
     <p align="center">
       <!-- <img src="https://i.imgur.com/SA8cjs8.png" @click="getBlogPosts"> -->
     </p>
-
     <ul id="blog-list">
       <li v-for="post in posts" :key="post.id">
         <hr>
         <br>
-        <h3>{{ post.title }}</h3>
+        <h3>
+          <router-link :to="{ name: 'read-post', params: { slug: post.slug }}">{{ post.title }}</router-link> |
+          <router-link :to="{ name: 'edit-post', params: { slug: post.slug }}" action="edit"><font-awesome-icon icon="pen-square" /></router-link>
+        </h3>
         <p class="last-updated">Updated {{ post.updated_at }}</p>
+        <p class="last-updated">{{ post.slug }}</p>
         <div>
           {{ post.body }}
         </div>
